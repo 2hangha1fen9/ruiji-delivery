@@ -67,12 +67,12 @@ public class EmployeeController {
     @GetMapping("/page")
     public R<Page<Employee>> page(int page, int pageSize, String name) {
         //模糊查询名称
-        LambdaQueryWrapper<Employee> queryWarpper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         if (name != null) {
-            queryWarpper.like(Employee::getName, name);
+            queryWrapper.like(Employee::getName, name);
         }
         //获取结果
-        Page<Employee> pageResult = employeeService.page(new Page<>(page, pageSize), queryWarpper);
+        Page<Employee> pageResult = employeeService.page(new Page<>(page, pageSize), queryWrapper);
         if (pageResult == null) {
             return R.error("数据获取失败");
         }
