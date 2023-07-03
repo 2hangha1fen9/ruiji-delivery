@@ -4,13 +4,11 @@ import cloud.zhfsmy.ruijidelivery.common.R;
 import cloud.zhfsmy.ruijidelivery.entity.Employee;
 import cloud.zhfsmy.ruijidelivery.service.EmployeeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/employee")
@@ -58,5 +56,26 @@ public class EmployeeController {
         //清除session数据
         request.getSession().removeAttribute("employee");
         return R.success("退出登录成功");
+    }
+
+    /**
+     * 获取员工列表
+     *
+     * @param page
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page<Employee>> page(int page, int pageSize, String name) {
+        //模糊查询名称
+        LambdaQueryWrapper<Employee> queryWarpper = new LambdaQueryWrapper<>();
+        if (name != null) {
+            queryWarpper.like(Employee::getName, name);
+        }
+        //获取结果
+        Page<Employee> pageResult = employeeService.page(new Page<Employee>(page, pageSize), queryWarpper);
+        if (pageResult == null) {
+            return R.error("数据获取失败");
+        }
+        return R.success(pageResult);
     }
 }
