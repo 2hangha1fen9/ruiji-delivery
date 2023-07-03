@@ -72,7 +72,7 @@ public class EmployeeController {
             queryWarpper.like(Employee::getName, name);
         }
         //获取结果
-        Page<Employee> pageResult = employeeService.page(new Page<Employee>(page, pageSize), queryWarpper);
+        Page<Employee> pageResult = employeeService.page(new Page<>(page, pageSize), queryWarpper);
         if (pageResult == null) {
             return R.error("数据获取失败");
         }
