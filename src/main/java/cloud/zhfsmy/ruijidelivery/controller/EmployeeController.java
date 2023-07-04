@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -18,10 +20,6 @@ public class EmployeeController {
 
     /**
      * 用户登录
-     *
-     * @param request
-     * @param employee
-     * @return
      */
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
@@ -47,9 +45,6 @@ public class EmployeeController {
 
     /**
      * 用户注销
-     *
-     * @param request
-     * @return
      */
     @PostMapping("/logout")
     public R<String> logout(HttpServletRequest request) {
@@ -60,9 +55,6 @@ public class EmployeeController {
 
     /**
      * 获取员工列表
-     *
-     * @param page
-     * @return
      */
     @GetMapping("/page")
     public R<Page<Employee>> page(int page, int pageSize, String name) {
@@ -77,5 +69,90 @@ public class EmployeeController {
             return R.error("数据获取失败");
         }
         return R.success(pageResult);
+    }
+
+    /**
+     * 根据员工ID获取员工信息
+     */
+    @GetMapping("/{id}")
+    public R<Employee> getEmployeeById(@PathVariable Long id) {
+        LambdaQueryWrapper<Employee> query = new LambdaQueryWrapper<>();
+        query.eq(Employee::getId, id);
+        Employee employee = employeeService.getOne(query);
+        return R.success(employee);
+    }
+
+    /**
+     * 新增员工
+     */
+    @PostMapping
+    public R<String> addEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+        String checkResult = checkUser(employee);
+        if (!checkResult.isEmpty()) {
+            return R.error(checkResult);
+        }
+        employee.setId(0L);
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        employee.setStatus(1);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setCreateUser((long) request.getSession().getAttribute("employee"));
+        employee.setUpdateUser((long) request.getSession().getAttribute("employee"));
+        boolean save = employeeService.save(employee);
+        if (save) {
+            return R.success("员工添加成功");
+        }
+        return R.success("员工添加失败");
+    }
+
+    /**
+     * 修改员工
+     */
+    @PutMapping
+    public R<String> editEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+        LambdaQueryWrapper<Employee> query = new LambdaQueryWrapper<>();
+        query.eq(Employee::getId, employee.getId());
+        Employee exEmployee = employeeService.getOne(query);
+        if (exEmployee == null) {
+            return R.error("员工不存在");
+        }
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        employee.setUpdateTime(LocalDateTime.now());
+        boolean save = employeeService.updateById(employee);
+        if (save) {
+            return R.success("员工修改成功");
+        }
+        return R.success("员工修改失败");
+    }
+
+    /**
+     * 模型验证
+     */
+    private String checkUser(Employee employee) {
+        if (employee.getUsername() == null || employee.getUsername().length() == 0) {
+            return "用户名不能为空";
+        }
+        if (employee.getName() == null || employee.getName().length() == 0) {
+            return "姓名不能为空";
+        }
+        if (employee.getPhone() == null || employee.getPhone().length() == 0) {
+            return "手机号不能为空";
+        }
+        if (employee.getIdNumber() == null || employee.getIdNumber().length() == 0) {
+            return "身份证号不能为空";
+        }
+        //修改时不验证
+        if (employee.getId() == 0) {
+            LambdaQueryWrapper<Employee> exQuery = new LambdaQueryWrapper<>();
+            exQuery.eq(Employee::getUsername, employee.getUsername()).or()
+                    .eq(Employee::getPhone, employee.getPhone()).or()
+                    .eq(Employee::getIdNumber, employee.getIdNumber());
+            Employee exEmployee = employeeService.getOne(exQuery);
+            if (exEmployee != null) {
+                return "员工已存在";
+            }
+        }
+
+        return "";
     }
 }
