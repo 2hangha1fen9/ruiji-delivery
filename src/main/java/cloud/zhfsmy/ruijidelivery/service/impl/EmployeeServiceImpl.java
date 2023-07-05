@@ -6,6 +6,6 @@ import cloud.zhfsmy.ruijidelivery.service.EmployeeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("employeeService")
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
 }

@@ -1,5 +1,6 @@
 package cloud.zhfsmy.ruijidelivery.controller;
 
+import cloud.zhfsmy.ruijidelivery.common.BusinessException;
 import cloud.zhfsmy.ruijidelivery.common.R;
 import cloud.zhfsmy.ruijidelivery.entity.Employee;
 import cloud.zhfsmy.ruijidelivery.service.EmployeeService;
@@ -30,11 +31,11 @@ public class EmployeeController {
         Employee emp = employeeService.getOne(query);
         //如果用户为空登录失败
         if (emp == null) {
-            return R.error("用户名或密码错误!");
+            throw new BusinessException("用户名或密码错误!");
         }
         //如果用户被禁用禁止登录
         if (emp.getStatus() == 0) {
-            return R.error("用户禁止登录!");
+            throw new BusinessException("用户禁止登录!");
         }
         //登录成功保存用户session
         request.getSession().setAttribute("employee", emp.getId());
@@ -64,7 +65,7 @@ public class EmployeeController {
         //获取结果
         Page<Employee> pageResult = employeeService.page(new Page<>(page, pageSize), queryWrapper);
         if (pageResult == null) {
-            return R.error("数据获取失败");
+            throw new BusinessException("数据获取失败");
         }
         return R.success(pageResult);
     }
@@ -77,6 +78,9 @@ public class EmployeeController {
         LambdaQueryWrapper<Employee> query = new LambdaQueryWrapper<>();
         query.eq(Employee::getId, id);
         Employee employee = employeeService.getOne(query);
+        if (employee == null) {
+            throw new BusinessException("数据获取失败");
+        }
         return R.success(employee);
     }
 
@@ -85,17 +89,15 @@ public class EmployeeController {
      */
     @PostMapping
     public R<String> addEmployee(@RequestBody Employee employee) {
-        String checkResult = checkUser(employee);
-        if (!checkResult.isEmpty()) {
-            return R.error(checkResult);
-        }
+        checkUser(employee);
+
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         employee.setStatus(1);
         boolean save = employeeService.save(employee);
-        if (save) {
-            return R.success("员工添加成功");
+        if (!save) {
+            throw new BusinessException("员工添加失败");
         }
-        return R.success("员工添加失败");
+        return R.success("员工添加成功");
     }
 
     /**
@@ -107,11 +109,11 @@ public class EmployeeController {
         query.eq(Employee::getId, employee.getId());
         Employee exEmployee = employeeService.getOne(query);
         if (exEmployee == null) {
-            return R.error("员工不存在");
+            throw new BusinessException("员工不存在");
         }
         boolean save = employeeService.updateById(employee);
-        if (save) {
-            return R.success("员工修改成功");
+        if (!save) {
+            throw new BusinessException("员工修改失败");
         }
         return R.success("员工修改失败");
     }
@@ -119,18 +121,18 @@ public class EmployeeController {
     /**
      * 模型验证
      */
-    private String checkUser(Employee employee) {
+    private void checkUser(Employee employee) {
         if (employee.getUsername() == null || employee.getUsername().length() == 0) {
-            return "用户名不能为空";
+            throw new BusinessException("用户名不能为空");
         }
         if (employee.getName() == null || employee.getName().length() == 0) {
-            return "姓名不能为空";
+            throw new BusinessException("姓名不能为空");
         }
         if (employee.getPhone() == null || employee.getPhone().length() == 0) {
-            return "手机号不能为空";
+            throw new BusinessException("手机号不能为空");
         }
         if (employee.getIdNumber() == null || employee.getIdNumber().length() == 0) {
-            return "身份证号不能为空";
+            throw new BusinessException("身份证号不能为空");
         }
         //修改时不验证
         if (employee.getId() == null) {
@@ -140,10 +142,8 @@ public class EmployeeController {
                     .eq(Employee::getIdNumber, employee.getIdNumber());
             Employee exEmployee = employeeService.getOne(exQuery);
             if (exEmployee != null) {
-                return "员工已存在";
+                throw new BusinessException("员工已存在");
             }
         }
-
-        return "";
     }
 }

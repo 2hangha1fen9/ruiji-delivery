@@ -1,5 +1,6 @@
 package cloud.zhfsmy.ruijidelivery.interceptor;
 
+import cloud.zhfsmy.ruijidelivery.common.BusinessException;
 import cloud.zhfsmy.ruijidelivery.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -34,5 +35,15 @@ public class GlobalExceptionHandler {
         }
 
         return R.error("未知错误");
+    }
+
+    /**
+     * 异常处理方法
+     */
+    @ExceptionHandler(BusinessException.class)
+    public R<String> exceptionHandler(BusinessException ex) {
+        log.error(ex.getMessage());
+
+        return R.error(ex.getMessage());
     }
 }
