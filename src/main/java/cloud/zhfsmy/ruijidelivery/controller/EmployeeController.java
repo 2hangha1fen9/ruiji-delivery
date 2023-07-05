@@ -84,7 +84,7 @@ public class EmployeeController {
      * 新增员工
      */
     @PostMapping
-    public R<String> addEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+    public R<String> addEmployee(@RequestBody Employee employee) {
         String checkResult = checkUser(employee);
         if (!checkResult.isEmpty()) {
             return R.error(checkResult);
@@ -102,7 +102,7 @@ public class EmployeeController {
      * 修改员工
      */
     @PutMapping
-    public R<String> editEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+    public R<String> editEmployee(@RequestBody Employee employee) {
         LambdaQueryWrapper<Employee> query = new LambdaQueryWrapper<>();
         query.eq(Employee::getId, employee.getId());
         Employee exEmployee = employeeService.getOne(query);

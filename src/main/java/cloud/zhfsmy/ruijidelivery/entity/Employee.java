@@ -2,8 +2,6 @@ package cloud.zhfsmy.ruijidelivery.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,8 +12,6 @@ public class Employee implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //解决longId序列号被截取
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private String username;
