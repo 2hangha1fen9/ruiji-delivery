@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -91,13 +89,8 @@ public class EmployeeController {
         if (!checkResult.isEmpty()) {
             return R.error(checkResult);
         }
-        employee.setId(0L);
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
         employee.setStatus(1);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser((long) request.getSession().getAttribute("employee"));
-        employee.setUpdateUser((long) request.getSession().getAttribute("employee"));
         boolean save = employeeService.save(employee);
         if (save) {
             return R.success("员工添加成功");
@@ -116,8 +109,6 @@ public class EmployeeController {
         if (exEmployee == null) {
             return R.error("员工不存在");
         }
-        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
-        employee.setUpdateTime(LocalDateTime.now());
         boolean save = employeeService.updateById(employee);
         if (save) {
             return R.success("员工修改成功");
@@ -142,7 +133,7 @@ public class EmployeeController {
             return "身份证号不能为空";
         }
         //修改时不验证
-        if (employee.getId() == 0) {
+        if (employee.getId() == null) {
             LambdaQueryWrapper<Employee> exQuery = new LambdaQueryWrapper<>();
             exQuery.eq(Employee::getUsername, employee.getUsername()).or()
                     .eq(Employee::getPhone, employee.getPhone()).or()

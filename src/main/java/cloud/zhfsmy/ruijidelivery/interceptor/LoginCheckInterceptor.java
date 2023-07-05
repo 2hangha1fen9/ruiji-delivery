@@ -1,5 +1,6 @@
 package cloud.zhfsmy.ruijidelivery.interceptor;
 
+import cloud.zhfsmy.ruijidelivery.common.CurrentContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         //获取请求URL
         String requestURI = request.getRequestURI();
         //判断用户是否登录,如果登录直接放行
+        Object userId = request.getSession().getAttribute("employee");
         if (request.getSession().getAttribute("employee") != null) {
+            //设置当前用户ID
+            CurrentContext.setCurrentUserId((Long) userId);
             return true;
         }
         //判断是否是白名单路径,如果有则放行
