@@ -82,7 +82,7 @@ public class CategoryController {
     /**
      * 删除分类
      */
-    @DeleteMapping()
+    @DeleteMapping
     public R<String> deleteCategory(@RequestParam Long ids) {
         //查询关联菜品
         LambdaQueryWrapper<Dish> dishQuery = new LambdaQueryWrapper<>();
