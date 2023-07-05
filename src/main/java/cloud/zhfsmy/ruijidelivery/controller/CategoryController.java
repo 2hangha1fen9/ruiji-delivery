@@ -39,7 +39,7 @@ public class CategoryController {
     }
 
     /**
-     * 新增员工
+     * 新增分类
      */
     @PostMapping
     public R<String> addCategory(@RequestBody Category category) {
@@ -55,7 +55,7 @@ public class CategoryController {
     }
 
     /**
-     * 修改员工
+     * 修改分类
      */
     @PutMapping
     public R<String> editCategory(@RequestBody Category category) {
