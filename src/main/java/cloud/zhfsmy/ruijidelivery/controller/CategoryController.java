@@ -13,6 +13,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -34,6 +36,17 @@ public class CategoryController {
             throw new BusinessException("数据获取失败");
         }
         return R.success(pageResult);
+    }
+
+    /**
+     * 根据类型获取分类
+     */
+    @GetMapping("/list")
+    public R<List<Category>> listByTypeId(int type) {
+        LambdaQueryWrapper<Category> query = new LambdaQueryWrapper<>();
+        query.eq(Category::getType, type);
+        List<Category> list = categoryService.list(query);
+        return R.success(list);
     }
 
     /**

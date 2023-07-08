@@ -58,5 +58,6 @@ public class SetmealDish implements Serializable {
 
 
     //是否删除
+    @TableField(select = false)
     private Integer isDeleted;
 }

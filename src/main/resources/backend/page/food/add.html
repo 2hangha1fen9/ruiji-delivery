@@ -328,6 +328,7 @@
             // 口味临时数据
             this.getFlavorListHand()
             this.id = requestUrlParam('id')
+            console.log(this.id, "---------------------------")
             this.actionType = this.id ? 'edit' : 'add'
             if (this.id) {
                 this.init()
@@ -338,7 +339,6 @@
         methods: {
             async init() {
                 queryDishById(this.id).then(res => {
-                    console.log(res)
                     if (String(res.code) === '1') {
                         this.ruleForm = {...res.data}
                         this.ruleForm.price = String(res.data.price / 100)
