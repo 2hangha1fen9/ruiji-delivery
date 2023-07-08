@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class RuijiDeliveryApplicationTests {
 
     @Test
-    void contextLoads() {
+    void test() {
+        System.out.println(this.getClass().getResource("").getPath());
     }
 
 }
