@@ -36,6 +36,14 @@ public class DishController {
         return R.success(dish);
     }
 
+    @GetMapping("/list")
+    public R<List<Dish>> getDishListByCategoryId(@RequestParam Long categoryId) {
+        LambdaQueryWrapper<Dish> query = new LambdaQueryWrapper<>();
+        query.eq(Dish::getCategoryId, categoryId);
+        List<Dish> list = dishService.list(query);
+        return R.success(list);
+    }
+
     /**
      * 修改菜品状态
      */
