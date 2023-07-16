@@ -17,6 +17,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             "/front/page/login.html",
             "/employee/login",
             "/user/login",
+            "/user/sendMsg",
             //静态资源放行
             "/**/api/**",
             "/**/images/**",
@@ -39,8 +40,13 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         //获取请求URL
         String requestURI = request.getRequestURI();
         //判断用户是否登录,如果登录直接放行
-        Object userId = request.getSession().getAttribute("employee");
-        if (request.getSession().getAttribute("employee") != null) {
+        Object employeeId = request.getSession().getAttribute("employee");
+        Object userId = request.getSession().getAttribute("user");
+        if (employeeId != null) {
+            //设置当前用户ID
+            CurrentContext.setCurrentUserId((Long) employeeId);
+            return true;
+        } else if (userId != null) {
             //设置当前用户ID
             CurrentContext.setCurrentUserId((Long) userId);
             return true;

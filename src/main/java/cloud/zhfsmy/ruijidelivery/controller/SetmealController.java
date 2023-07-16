@@ -11,8 +11,8 @@ import cloud.zhfsmy.ruijidelivery.service.SetmealDishService;
 import cloud.zhfsmy.ruijidelivery.service.SetmealService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 public class SetmealController {
-    @Autowired
+    @Resource
     private SetmealService setmealService;
 
-    @Autowired
+    @Resource
     private CategoryService categoryService;
 
-    @Autowired
+    @Resource
     private SetmealDishService setmealDishService;
 
     @GetMapping("/{id}")

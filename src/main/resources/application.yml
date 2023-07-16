@@ -24,3 +24,10 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       logic-delete-field: "isDeleted"
+
+sms:
+  sign-name: "阿里云短信测试"
+  template:
+    valid-code: SMS_154950909
+  access-key-id: LTAI5tJan7EWxEm1MADgVusz
+  access-key-secret: z82nHW5V8ChuxD9iXJErLN6G5vSZDY
